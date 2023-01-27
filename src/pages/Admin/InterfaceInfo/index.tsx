@@ -160,7 +160,7 @@ const TableList: React.FC = () => {
    * @zh-CN 国际化配置
    * */
 
-  const columns: ProColumns<API.InterfaceInfo>[] = [
+  const columns: ProColumns<API.InterfaceInfo>[null] = [
     {
       title: '接口名称',
       dataIndex: 'name',

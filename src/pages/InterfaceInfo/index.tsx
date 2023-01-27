@@ -1,23 +1,24 @@
-import { PageContainer } from '@ant-design/pro-components';
-import React, { useEffect, useState } from 'react';
+import {PageContainer} from '@ant-design/pro-components';
+import React, {useEffect, useState} from 'react';
 import {Button, Card, Descriptions, Form, message, Input, Spin, Divider} from 'antd';
 import {
   getInterfaceInfoByIdUsingGET,
   invokeInterfaceInfoUsingPOST,
 } from '@/services/yuapi-backend/interfaceInfoController';
-import { useParams } from '@@/exports';
-
+import {useParams} from '@@/exports';
+import { Image } from 'antd';
 /**
  * 主页
  * @constructor
  */
+
 const Index: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<API.InterfaceInfo>();
   const [invokeRes, setInvokeRes] = useState<any>();
   const [invokeLoading, setInvokeLoading] = useState(false);
-
   const params = useParams();
+  const [imageUrl,setImageUrl] = useState<any>();
 
   const loadData = async () => {
     if (!params.id) {
@@ -52,12 +53,14 @@ const Index: React.FC = () => {
         ...values,
       });
       setInvokeRes(res.data);
+      setImageUrl(JSON.parse(res.data).imgurl);
       message.success('请求成功');
     } catch (error: any) {
       message.error('操作失败，' + error.message);
     }
     setInvokeLoading(false);
   };
+
 
   return (
     <PageContainer title="查看接口文档">
@@ -78,22 +81,30 @@ const Index: React.FC = () => {
           <>接口不存在</>
         )}
       </Card>
-      <Divider />
+      <Divider/>
       <Card title="在线测试">
         <Form name="invoke" layout="vertical" onFinish={onFinish}>
           <Form.Item label="请求参数" name="userRequestParams">
-            <Input.TextArea />
+            {data?
+              <Input.TextArea defaultValue={data.requestParams}/>
+              :<></>
+            }
           </Form.Item>
-          <Form.Item wrapperCol={{ span: 16 }}>
+          <Form.Item wrapperCol={{span: 16}}>
             <Button type="primary" htmlType="submit">
               调用
             </Button>
           </Form.Item>
         </Form>
       </Card>
-      <Divider />
+      <Divider/>
       <Card title="返回结果" loading={invokeLoading}>
         {invokeRes}
+        <br/>
+        <Image
+          width={1000}
+          src={imageUrl}
+        />
       </Card>
     </PageContainer>
   );
